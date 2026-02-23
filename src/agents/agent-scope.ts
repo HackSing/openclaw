@@ -1,3 +1,4 @@
+import { existsSync } from "node:fs";
 import path from "node:path";
 import type { OpenClawConfig } from "../config/config.js";
 import { resolveAgentModelFallbackValues } from "../config/model-input.js";
@@ -225,7 +226,13 @@ export function resolveAgentWorkspaceDir(cfg: OpenClawConfig, agentId: string) {
     return resolveDefaultAgentWorkspaceDir(process.env);
   }
   const stateDir = resolveStateDir(process.env);
-  return path.join(stateDir, "workspace", id);
+  const newPath = path.join(stateDir, "workspace", id);
+  // Fallback to old path if new path doesn't exist (migration support)
+  const oldPath = path.join(stateDir, `workspace-${id}`);
+  if (!existsSync(newPath) && existsSync(oldPath)) {
+    return oldPath;
+  }
+  return newPath;
 }
 
 export function resolveAgentDir(cfg: OpenClawConfig, agentId: string) {
