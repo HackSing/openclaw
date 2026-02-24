@@ -701,6 +701,6 @@ export function loadOpenClawPlugins(options: PluginLoadOptions = {}): PluginRegi
     registryCache.set(cacheKey, registry);
   }
   setActivePluginRegistry(registry, cacheKey);
-  initializeGlobalHookRunner(registry);
+  initializeGlobalHookRunner(registry, normalized);
   return registry;
 }
