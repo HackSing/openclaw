@@ -59,6 +59,7 @@ export function resolvePluginTools(params: {
   const registry = loadOpenClawPlugins({
     config: effectiveConfig,
     workspaceDir: params.context.workspaceDir,
+    agentId: params.context.agentId,
     logger: createPluginLoaderLogger(log),
   });
 

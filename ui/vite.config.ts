@@ -22,6 +22,7 @@ export default defineConfig(() => {
   const envBase = process.env.OPENCLAW_CONTROL_UI_BASE_PATH?.trim();
   const base = envBase ? normalizeBase(envBase) : "./";
   return {
+    root: here,
     base,
     publicDir: path.resolve(here, "public"),
     optimizeDeps: {
@@ -31,8 +32,7 @@ export default defineConfig(() => {
       outDir: path.resolve(here, "../dist/control-ui"),
       emptyOutDir: true,
       sourcemap: true,
-      // Keep CI/onboard logs clean; current control UI chunking is intentionally above 500 kB.
-      chunkSizeWarningLimit: 1024,
+      target: "esnext",
     },
     server: {
       host: true,
