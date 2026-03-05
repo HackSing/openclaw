@@ -1,3 +1,4 @@
+import SHARED_TOOL_DISPLAY_JSON from "../../../apps/shared/OpenClawKit/Sources/OpenClawKit/Resources/tool-display.json" with { type: "json" };
 import type { IconName } from "./icons.ts";
 import {
   defaultTitle,
@@ -12,7 +13,6 @@ import {
   resolveWriteDetail,
   type ToolDisplaySpec as ToolDisplaySpecBase,
 } from "./tool-display-common.js";
-import rawConfig from "./tool-display.json" with { type: "json" };
 
 type ToolDisplaySpec = ToolDisplaySpecBase & {
   icon?: string;
@@ -33,7 +33,7 @@ export type ToolDisplay = {
   detail?: string;
 };
 
-const TOOL_DISPLAY_CONFIG = rawConfig as ToolDisplayConfig;
+const TOOL_DISPLAY_CONFIG = SHARED_TOOL_DISPLAY_JSON as ToolDisplayConfig;
 const FALLBACK = TOOL_DISPLAY_CONFIG.fallback ?? { icon: "puzzle" };
 const TOOL_MAP = TOOL_DISPLAY_CONFIG.tools ?? {};
 

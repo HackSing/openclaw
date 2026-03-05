@@ -7,19 +7,21 @@ import {
   DEFAULT_AGENT_ID,
   normalizeAgentId,
   parseAgentSessionKey,
+  resolveAgentIdFromSessionKey,
 } from "../routing/session-key.js";
 import { resolveUserPath } from "../utils.js";
 import { normalizeSkillFilter } from "./skills/filter.js";
 import { resolveDefaultAgentWorkspaceDir } from "./workspace.js";
 const log = createSubsystemLogger("agent-scope");
 
+// Re-export for convenience
+export { resolveAgentIdFromSessionKey } from "../routing/session-key.js";
+
 /** Strip null bytes from paths to prevent ENOTDIR errors. */
 function stripNullBytes(s: string): string {
   // eslint-disable-next-line no-control-regex
   return s.replace(/\0/g, "");
 }
-
-export { resolveAgentIdFromSessionKey } from "../routing/session-key.js";
 
 type AgentEntry = NonNullable<NonNullable<OpenClawConfig["agents"]>["list"]>[number];
 
@@ -201,6 +203,42 @@ export function resolveAgentModelFallbacksOverride(
     return undefined;
   }
   return Array.isArray(raw.fallbacks) ? raw.fallbacks : undefined;
+}
+
+// Backward-compatible alias. Prefer explicit/effective helpers at new call sites.
+export function resolveFallbackAgentId(params: {
+  agentId?: string | null;
+  sessionKey?: string | null;
+}): string {
+  const explicitAgentId = typeof params.agentId === "string" ? params.agentId.trim() : "";
+  if (explicitAgentId) {
+    return normalizeAgentId(explicitAgentId);
+  }
+  return resolveAgentIdFromSessionKey(params.sessionKey);
+}
+
+export function resolveRunModelFallbacksOverride(params: {
+  cfg: OpenClawConfig | undefined;
+  agentId?: string | null;
+  sessionKey?: string | null;
+}): string[] | undefined {
+  if (!params.cfg) {
+    return undefined;
+  }
+  return resolveAgentModelFallbacksOverride(
+    params.cfg,
+    resolveFallbackAgentId({ agentId: params.agentId, sessionKey: params.sessionKey }),
+  );
+}
+
+export function hasConfiguredModelFallbacks(params: {
+  cfg: OpenClawConfig | undefined;
+  agentId?: string | null;
+  sessionKey?: string | null;
+}): boolean {
+  const fallbacksOverride = resolveRunModelFallbacksOverride(params);
+  const defaultFallbacks = resolveAgentModelFallbackValues(params.cfg?.agents?.defaults?.model);
+  return (fallbacksOverride ?? defaultFallbacks).length > 0;
 }
 
 export function resolveEffectiveModelFallbacks(params: {

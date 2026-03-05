@@ -113,7 +113,7 @@ function validatePluginConfig(params: {
   if (result.ok) {
     return { ok: true, value: params.value as Record<string, unknown> | undefined };
   }
-  return { ok: false, errors: result.errors };
+  return { ok: false, errors: result.errors?.map((e) => e.message) ?? [] };
 }
 
 function resolvePluginModuleExport(moduleExport: unknown): {
@@ -168,7 +168,7 @@ function createPluginRecord(params: {
     cliCommands: [],
     services: [],
     commands: [],
-    httpHandlers: 0,
+    httpRoutes: 0,
     hookCount: 0,
     configSchema: params.configSchema,
     configUiHints: undefined,
