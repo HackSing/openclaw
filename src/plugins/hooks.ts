@@ -149,18 +149,18 @@ function getHooksForName<K extends PluginHookName>(
 export function createHookRunner(registry: PluginRegistry, options: HookRunnerOptions = {}) {
   const logger = options.logger;
   const catchErrors = options.catchErrors ?? true;
-  const pluginConfigEntries = options.pluginConfigEntries;
+  const allowedAgents = options.allowedAgents;
 
   // Check if a hook should run based on allowedAgents config
   const shouldRunHook = (pluginId: string, agentId?: string): boolean => {
     if (!agentId) {
       return true;
     }
-    const entry = pluginConfigEntries?.[pluginId];
-    if (!entry?.allowedAgents) {
+    const pluginAllowedAgents = allowedAgents?.[pluginId];
+    if (!pluginAllowedAgents || pluginAllowedAgents.length === 0) {
       return true;
     } // No restriction configured
-    return entry.allowedAgents.includes(agentId);
+    return pluginAllowedAgents.includes(agentId);
   };
 
   const mergeBeforeModelResolve = (

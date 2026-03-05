@@ -27,7 +27,12 @@ export function initializeGlobalHookRunner(
   globalRegistry = registry;
 
   // Extract plugin config entries for allowedAgents filtering
-  const pluginConfigEntries: Record<string, { allowedAgents?: string[] }> = config?.entries ?? {};
+  const allowedAgents: Record<string, string[]> = {};
+  for (const [pluginId, entry] of Object.entries(config?.entries ?? {})) {
+    if (entry.allowedAgents && entry.allowedAgents.length > 0) {
+      allowedAgents[pluginId] = entry.allowedAgents;
+    }
+  }
 
   globalHookRunner = createHookRunner(registry, {
     logger: {
@@ -36,7 +41,7 @@ export function initializeGlobalHookRunner(
       error: (msg) => log.error(msg),
     },
     catchErrors: true,
-    pluginConfigEntries,
+    allowedAgents,
   });
 
   const hookCount = registry.hooks.length;
