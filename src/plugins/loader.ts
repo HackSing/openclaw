@@ -41,7 +41,6 @@ export type PluginLoadOptions = {
   runtimeOptions?: CreatePluginRuntimeOptions;
   cache?: boolean;
   mode?: "full" | "validate";
-  agentId?: string;
 };
 
 const registryCache = new Map<string, PluginRegistry>();
