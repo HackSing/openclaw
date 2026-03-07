@@ -28,7 +28,7 @@ export function initializeGlobalHookRunner(
 
   const allowedAgents: Record<string, string[]> = {};
   for (const [pluginId, entry] of Object.entries(config?.entries ?? {})) {
-    if (entry.allowedAgents && entry.allowedAgents.length > 0) {
+    if (entry.allowedAgents !== undefined) {
       allowedAgents[pluginId] = entry.allowedAgents;
     }
   }
